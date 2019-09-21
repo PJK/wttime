@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+import click
+from wttime.parser import Parser
+
+@click.command()
+
+@click.argument('timestring')
+def parse(timestring):
+    Parser().parse(timestring)
+
+
+if __name__ == '__main__':
+    parse()
