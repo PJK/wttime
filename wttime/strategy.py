@@ -1,17 +1,17 @@
-import time
+from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Tuple, Optional, NewType
 
 
 class Strategy(ABC):
     @abstractmethod
-    def parse(self, timespec: str) -> Optional[Tuple[float, time.struct_time]]:
+    def parse(self, timespec: str) -> Optional[Tuple[float, datetime]]:
         pass
 
 
 class TimestampStrategy(Strategy):
     def parse(self, timespec):
         try:
-            return [1., time.gmtime(int(timespec))]
+            return [1., datetime.fromtimestamp(int(timespec))]
         except ValueError:
             return None
