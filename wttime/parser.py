@@ -55,7 +55,7 @@ class Parser:
             confidence, result = parse_result
             return confidence * Parser.instant_likelihood(now, result), result
 
-    def parse(self, now, timespec):
+    def parse(self, now, timespec) -> Tuple[float, datetime]:
         parses = [Parser.with_likelihood(now, strategy.parse(timespec)) for
                   strategy in self.strategies]
         guesses = list(filter(None, parses))

@@ -1,18 +1,60 @@
 #!/usr/bin/env python3
 
 import click
+import dateutil.tz as tz
 from datetime import datetime
-from pytz import timezone
 import pytz
 from wttime.parser import Parser
 
 @click.command()
-
+@click.option('--confidence', '-c', is_flag=True, show_default=True,
+              help='Show the confidence level of the chosen interpretation.')
+@click.option('--utc/--no-utc', default=True, show_default=True,
+              help='Show the result in UTC.')
+@click.option('--local/--no-local', '-l/-nl', default=False, show_default=True,
+              help='Show the result the local time zone.')
+@click.option('--remote/--no-remote', '-r/-nr', default=False,
+              show_default=True,
+              help='Show the result in the time zone specified by '
+                   '--timezone.')
+@click.option('--timezone', '-t', default='America/Los_Angeles',
+              show_default=True,
+              help='Supplementary timezone to use for --remote, given in '
+                   'the "tz database" format.')
+@click.option('--format', '-f', default='%Y-%m-%d %H:%M:%S (%z)',
+              show_default=True,
+              help='Datetime format specification in the Python strftime '
+                   'format (see http://strftime.org/ for reference).')
+@click.option('--usec/--no-usec', '-u', default=False, show_default=True,
+              help='Show the result as a Unix timestamp in seconds.')
+@click.option('--umilli/--no-umilli', '-m', default=False, show_default=True,
+              help='Show the result as a Unix timestamp in milliseconds.')
+@click.option('--umicro/--no-umicro', '-y', default=False, show_default=True,
+              help='Show the result as a Unix timestamp in microseconds.')
 @click.argument('timestring')
-def parse(timestring):
-    confidence, guess = Parser().parse(datetime.now(), timestring)
-    print(guess.replace(tzinfo=pytz.utc).strftime('%Y-%m-%d %H:%M:%S %Z%z'))
-    print(guess.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
+def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
+          umicro, timestring):
+    """Fuzzily parse TIMESTRING and print the result."""
+    dt_format = '{0: <8} {1}'
+
+    guess_confidence, guess = Parser().parse(datetime.now(), timestring)
+    if confidence:
+        print('Confidence: %.10f' % guess_confidence)
+    if utc:
+        print(dt_format.format('UTC:',
+                               guess.astimezone(tz.UTC).strftime(format)))
+    if local:
+        print(dt_format.format('Local:',
+                               guess.astimezone(tz.tzlocal()).strftime(format)))
+    if remote:
+        print(dt_format.format('Remote:',
+                               guess.astimezone(tz.gettz(timezone)).strftime(format)))
+    if usec:
+        print(dt_format.format('Seconds:', int(guess.timestamp())))
+    if umilli:
+        print(dt_format.format('Millis:', int(guess.timestamp() * 1e3)))
+    if umicro:
+        print(dt_format.format('Micros:', int(guess.timestamp() * 1e6)))
 
 
 if __name__ == '__main__':
