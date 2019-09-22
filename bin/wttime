@@ -4,7 +4,6 @@ import click
 import sys
 import dateutil.tz as tz
 from datetime import datetime
-import pytz
 from wttime.parser import Parser
 
 @click.command()
