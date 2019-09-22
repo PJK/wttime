@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+import sys
 import dateutil.tz as tz
 from datetime import datetime
 import pytz
@@ -34,12 +35,23 @@ from wttime.parser import Parser
 @click.option('--label/--no-label', '-x/-nx', is_flag=True, default=True,
               show_default=True,
               help='Print a label in front of each output.')
-@click.argument('timestring')
+@click.argument('timestring', required=False)
 def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
           umicro, label, timestring):
     """Fuzzily parse TIMESTRING and print the result."""
     dt_format = '{0: <8} {1}' if label else '{1}'
 
+    # TODO: Consider handling 0+ arguments uniformly
+    stdin_timestring = sys.stdin.readline() if not sys.stdin.isatty() else None
+    if timestring and stdin_timestring:
+        click.echo('WARNING: TIMESTRING both on the STDIN and passed as an '
+              'argument.', err=True)
+    timestring = timestring or stdin_timestring
+
+    if not timestring:
+        return
+
+    # TODO: Handle failures to parse at all
     guess_confidence, guess = Parser().parse(datetime.now(), timestring)
     if confidence:
         print('Confidence: %.10f' % guess_confidence)
