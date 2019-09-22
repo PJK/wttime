@@ -31,11 +31,14 @@ from wttime.parser import Parser
               help='Show the result as a Unix timestamp in milliseconds.')
 @click.option('--umicro/--no-umicro', '-y', default=False, show_default=True,
               help='Show the result as a Unix timestamp in microseconds.')
+@click.option('--label/--no-label', '-x/-nx', is_flag=True, default=True,
+              show_default=True,
+              help='Print a label in front of each output.')
 @click.argument('timestring')
 def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
-          umicro, timestring):
+          umicro, label, timestring):
     """Fuzzily parse TIMESTRING and print the result."""
-    dt_format = '{0: <8} {1}'
+    dt_format = '{0: <8} {1}' if label else '{1}'
 
     guess_confidence, guess = Parser().parse(datetime.now(), timestring)
     if confidence:
