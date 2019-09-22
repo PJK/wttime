@@ -3,11 +3,15 @@ from time import gmtime, struct_time, time, mktime
 from datetime import timedelta, datetime
 import math
 
-from wttime.strategy import TimestampStrategy
+from wttime.strategy import *
 
 
 class Parser:
-    strategies = [TimestampStrategy()]
+    strategies = [
+        SecondsTimestampStrategy(),
+        MillisTimestampStrategy(),
+        MicrosTimestampStrategy()
+    ]
 
     @staticmethod
     def instant_likelihood(now: datetime, instant: datetime) -> float:
@@ -41,9 +45,8 @@ class Parser:
             return 1 - 0.7 * (instant_secs - now.timestamp()) / \
                    horizon.total_seconds()
         else:
-            return 1 - logcurve(
-                (1 - 0.3) * 2,
-                (now + horizon).timestamp(), 1. / y2k, instant_secs)
+            return 0.3 - logcurve(0.3, (now + horizon).timestamp(), 1. / y2k,
+                                  instant_secs)
 
     @staticmethod
     def with_likelihood(now: datetime, parse_result):
@@ -51,7 +54,7 @@ class Parser:
             confidence, result = parse_result
             return confidence * Parser.instant_likelihood(now, result), result
 
-    def parse(self, now, timespec) -> Tuple[float, datetime]:
+    def parse(self, now, timespec: str) -> Tuple[float, datetime]:
         parses = [
             Parser.with_likelihood(now, strategy.parse(timespec))
             for strategy in self.strategies

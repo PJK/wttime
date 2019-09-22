@@ -23,8 +23,17 @@ UTC:     2009-01-07 07:11:52 (+0000)
 
 ### Help
 ```sh
-$ wttime --help
+wttime --help
 ```
+
+## TODOs
+
+- add CI
+- make open source
+- push to pypi
+- add parsers for standard timestrings
+- refactor main to pull out logic and test it
+- add type annotations and start checking
 
 ## License
 
