@@ -6,32 +6,59 @@ import dateutil.tz as tz
 from datetime import datetime
 from wttime.parser import Parser
 
+
 @click.command()
-@click.option('--confidence', '-c', is_flag=True, show_default=True,
+@click.option('--confidence',
+              '-c',
+              is_flag=True,
+              show_default=True,
               help='Show the confidence level of the chosen interpretation.')
-@click.option('--utc/--no-utc', default=True, show_default=True,
+@click.option('--utc/--no-utc',
+              default=True,
+              show_default=True,
               help='Show the result in UTC.')
-@click.option('--local/--no-local', '-l/-nl', default=False, show_default=True,
+@click.option('--local/--no-local',
+              '-l/-nl',
+              default=False,
+              show_default=True,
               help='Show the result the local time zone.')
-@click.option('--remote/--no-remote', '-r/-nr', default=False,
+@click.option('--remote/--no-remote',
+              '-r/-nr',
+              default=False,
               show_default=True,
               help='Show the result in the time zone specified by '
-                   '--timezone.')
-@click.option('--timezone', '-t', default='America/Los_Angeles',
+              '--timezone.')
+@click.option('--timezone',
+              '-t',
+              default='America/Los_Angeles',
               show_default=True,
               help='Supplementary timezone to use for --remote, given in '
-                   'the "tz database" format.')
-@click.option('--format', '-f', default='%Y-%m-%d %H:%M:%S (%z)',
+              'the "tz database" format.')
+@click.option('--format',
+              '-f',
+              default='%Y-%m-%d %H:%M:%S (%z)',
               show_default=True,
               help='Datetime format specification in the Python strftime '
-                   'format (see http://strftime.org/ for reference).')
-@click.option('--usec/--no-usec', '-u', default=False, show_default=True,
+              'format (see http://strftime.org/ for reference).')
+@click.option('--usec/--no-usec',
+              '-u',
+              default=False,
+              show_default=True,
               help='Show the result as a Unix timestamp in seconds.')
-@click.option('--umilli/--no-umilli', '-m', default=False, show_default=True,
+@click.option('--umilli/--no-umilli',
+              '-m',
+              default=False,
+              show_default=True,
               help='Show the result as a Unix timestamp in milliseconds.')
-@click.option('--umicro/--no-umicro', '-y', default=False, show_default=True,
+@click.option('--umicro/--no-umicro',
+              '-y',
+              default=False,
+              show_default=True,
               help='Show the result as a Unix timestamp in microseconds.')
-@click.option('--label/--no-label', '-x/-nx', is_flag=True, default=True,
+@click.option('--label/--no-label',
+              '-x/-nx',
+              is_flag=True,
+              default=True,
               show_default=True,
               help='Print a label in front of each output.')
 @click.argument('timestring', required=False)
@@ -43,8 +70,10 @@ def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
     # TODO: Consider handling 0+ arguments uniformly
     stdin_timestring = sys.stdin.readline() if not sys.stdin.isatty() else None
     if timestring and stdin_timestring:
-        click.echo('WARNING: TIMESTRING both on the STDIN and passed as an '
-              'argument.', err=True)
+        click.echo(
+            'WARNING: TIMESTRING both on the STDIN and passed as an '
+            'argument.',
+            err=True)
     timestring = timestring or stdin_timestring
 
     if not timestring:
@@ -55,14 +84,18 @@ def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
     if confidence:
         print('Confidence: %.10f' % guess_confidence)
     if utc:
-        print(dt_format.format('UTC:',
-                               guess.astimezone(tz.UTC).strftime(format)))
+        print(
+            dt_format.format('UTC:',
+                             guess.astimezone(tz.UTC).strftime(format)))
     if local:
-        print(dt_format.format('Local:',
-                               guess.astimezone(tz.tzlocal()).strftime(format)))
+        print(
+            dt_format.format('Local:',
+                             guess.astimezone(tz.tzlocal()).strftime(format)))
     if remote:
-        print(dt_format.format('Remote:',
-                               guess.astimezone(tz.gettz(timezone)).strftime(format)))
+        print(
+            dt_format.format(
+                'Remote:',
+                guess.astimezone(tz.gettz(timezone)).strftime(format)))
     if usec:
         print(dt_format.format('Seconds:', int(guess.timestamp())))
     if umilli:

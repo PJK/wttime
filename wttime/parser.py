@@ -7,9 +7,7 @@ from wttime.strategy import TimestampStrategy
 
 
 class Parser:
-    strategies = [
-        TimestampStrategy()
-    ]
+    strategies = [TimestampStrategy()]
 
     @staticmethod
     def instant_likelihood(now: datetime, instant: datetime) -> float:
@@ -28,7 +26,6 @@ class Parser:
         - (T, T + 60 days] - linear -> (1, 0.3]
         - (T + 60 days, infty) - half-sigmoid -> (0.3, 0)
         """
-
         def logcurve(max_value, midpoint, slope, x):
             return max_value / (1 + math.exp(-slope * (x - midpoint)))
 
@@ -44,10 +41,9 @@ class Parser:
             return 1 - 0.7 * (instant_secs - now.timestamp()) / \
                    horizon.total_seconds()
         else:
-            return 1 - logcurve((1 - 0.3) * 2,
-                                (now + horizon).timestamp(),
-                                1. / y2k,
-                                instant_secs)
+            return 1 - logcurve(
+                (1 - 0.3) * 2,
+                (now + horizon).timestamp(), 1. / y2k, instant_secs)
 
     @staticmethod
     def with_likelihood(now: datetime, parse_result):
@@ -56,8 +52,10 @@ class Parser:
             return confidence * Parser.instant_likelihood(now, result), result
 
     def parse(self, now, timespec) -> Tuple[float, datetime]:
-        parses = [Parser.with_likelihood(now, strategy.parse(timespec)) for
-                  strategy in self.strategies]
+        parses = [
+            Parser.with_likelihood(now, strategy.parse(timespec))
+            for strategy in self.strategies
+        ]
         guesses = list(filter(None, parses))
         guesses.sort(key=lambda g: g[0], reverse=True)
         if guesses:
