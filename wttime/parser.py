@@ -14,7 +14,7 @@ class Parser:
     @staticmethod
     def instant_likelihood(now: datetime, instant: datetime) -> float:
         """Given a time, estimates the likelihood (0, 1] that this is a real
-        time timestamp.
+        timestamp.
 
         The following assumptions are used:
         - Most timestamps are in the past by the point they are inspected
@@ -28,14 +28,16 @@ class Parser:
         - (T, T + 60 days] - linear -> (1, 0.3]
         - (T + 60 days, infty) - half-sigmoid -> (0.3, 0)
         """
+
         def logcurve(max_value, midpoint, slope, x):
             return max_value / (1 + math.exp(-slope * (x - midpoint)))
+
         y2k = datetime(2000, 1, 1).timestamp()
         horizon = timedelta(days=60)
         instant_secs = instant.timestamp()
 
         if instant <= datetime.fromtimestamp(0):
-            return logcurve(0.2 * 2, 0, 1./y2k, instant_secs)
+            return logcurve(0.2 * 2, 0, 1. / y2k, instant_secs)
         elif instant <= now:
             return 0.2 + instant_secs / now.timestamp() * 0.8
         elif instant <= now + horizon:
@@ -44,7 +46,7 @@ class Parser:
         else:
             return 1 - logcurve((1 - 0.3) * 2,
                                 (now + horizon).timestamp(),
-                                1./y2k,
+                                1. / y2k,
                                 instant_secs)
 
     @staticmethod
@@ -53,8 +55,10 @@ class Parser:
             confidence, result = parse_result
             return confidence * Parser.instant_likelihood(now, result), result
 
-
-    def parse(self, timespec):
-        print([Parser.with_likelihood(datetime.now(), strategy.parse(timespec))
-               for
-               strategy in self.strategies])
+    def parse(self, now, timespec):
+        parses = [Parser.with_likelihood(now, strategy.parse(timespec)) for
+                  strategy in self.strategies]
+        guesses = list(filter(None, parses))
+        guesses.sort(key=lambda g: g[0], reverse=True)
+        if guesses:
+            return guesses[0]

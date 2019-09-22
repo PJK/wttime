@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from wttime.parser import Parser
 
+
 class TestParser(TestCase):
     def test_instant_likelihood(self):
         reference = datetime(2019, 1, 1)

@@ -11,6 +11,7 @@ setup(name='wttime',
       scripts=['bin/wttime'],
       install_requires=[
             'click',
+            'pytz'
       ],
       test_suite='nose.collector',
       tests_require=['nose'],
