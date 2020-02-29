@@ -1,7 +1,6 @@
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Tuple, Optional
-import math
 
 
 class Strategy(ABC):
