@@ -13,6 +13,7 @@ setup(name='wttime',
             'click',
             'python-dateutil'
       ],
+      setup_requires=['nose>=1.0'],
       test_suite='nose.collector',
       tests_require=['nose'],
       zip_safe=False)
