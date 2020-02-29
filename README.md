@@ -41,6 +41,22 @@ wttime --help
 - refactor main to pull out logic and test it
 - add type annotations and start checking
 
+## Development
+
+### Run tests
+
+```
+pytest
+```
+
+### Publish to PyPI
+
+```
+python setup.py sdist
+twine upload dist/*
+```
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
