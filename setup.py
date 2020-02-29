@@ -4,7 +4,7 @@ with open('README.md') as f:
     long_description = f.read()
 
 setup(name='wttime',
-      version='0.1',
+      version='0.1.1',
       description='Smart timestamp utility',
       long_description=long_description,
       long_description_content_type='text/markdown',
