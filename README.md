@@ -1,5 +1,8 @@
 # wttime - A fuzzy time parser
 
+**DISCLAIMER:** At this point, the code is a dirty initial sketch of what I want
+ to build. Assume I have no idea what I'm doing.
+
 Tired of figuring out what this timestamp means? Done with format strings?
 Cannot be bothered to care about all the seconds, millis, and jiffies?
 
@@ -16,9 +19,12 @@ pip install wttime
 
 ### Examples
 
+Guessing the most likely meaning:
 ```sh
 $ wttime 1231312312
 UTC:     2009-01-07 07:11:52 (+0000)
+$ wttime 1231231233000000
+UTC:     2009-01-06 08:40:33 (+0000)
 ```
 
 ### Help
@@ -29,12 +35,12 @@ wttime --help
 ## TODOs
 
 - add CI
-- make open source
-- push to pypi
 - add parsers for standard timestrings
+- add more output options
+- get more data about format frequency in the wild
 - refactor main to pull out logic and test it
 - add type annotations and start checking
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
