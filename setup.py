@@ -3,7 +3,7 @@ from setuptools import setup
 setup(name='wttime',
       version='0.1',
       description='Smart timestamp utility',
-      url='TODO',
+      url='https://github.com/PJK/wttime/actions',
       author='Pavel Kalvoda',
       author_email='me@pavelkalvoda.com',
       license='MIT',
