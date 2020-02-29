@@ -1,10 +1,10 @@
 from unittest import TestCase
 from datetime import datetime
 
-from wttime.strategy import TimestampStrategy
+from wttime.strategy import SecondsTimestampStrategy
 
 
-class TestTimestampStrategy(TestCase):
+class TestSecondsTimestampStrategy(TestCase):
     def test_parses_int(self):
-        self.assertEqual(TimestampStrategy().parse('154'),
-                         [1., datetime.fromtimestamp(154)])
+        self.assertEqual(SecondsTimestampStrategy().parse('154'),
+                         [100., datetime.fromtimestamp(154)])
