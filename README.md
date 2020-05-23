@@ -1,6 +1,6 @@
 # wttime - A fuzzy time parser
 
-![Lint and test](https://github.com/PJK/wttime/workflows/Tests/badge.svg?branch=master)
+[![Lint and test](https://github.com/PJK/wttime/workflows/Tests/badge.svg?branch=master)](https://github.com/PJK/wttime/actions?query=workflow%3ATests)
 
 Tired of figuring out what this timestamp means? Done with format strings?
 Cannot be bothered to care about all the seconds, millis, and jiffies?
