@@ -3,8 +3,10 @@
 import click
 import sys
 import dateutil.tz as tz
+
 from datetime import datetime
 from wttime.parser import Parser
+from wttime.formatter import format_parse
 from typing import Optional
 
 
@@ -63,14 +65,12 @@ from typing import Optional
               show_default=True,
               help='Print a label in front of each output.')
 @click.argument('timestring', required=False)
-def parse(confidence: float,
-          utc: bool, local: bool, remote: bool,
+def parse(confidence: bool, utc: bool, local: bool, remote: bool,
           timezone: str, format: str,
           usec: bool, umilli: bool, umicro: bool,
           label: bool,
           timestring: Optional[str]) -> None:
     """Fuzzily parse TIMESTRING and print the result."""
-    dt_format = '{0: <8} {1}' if label else '{1}'
 
     # TODO: Consider handling 0+ arguments uniformly
     stdin_timestring = sys.stdin.readline() if not sys.stdin.isatty() else None
@@ -90,28 +90,9 @@ def parse(confidence: float,
               "https://github.com/PJK/wttime/issues if I should have.")
         sys.exit(1)
 
-    guess_confidence, guess = parse
-    if confidence:
-        print('Confidence: %.10f' % guess_confidence)
-    if utc:
-        print(
-            dt_format.format('UTC:',
-                             guess.astimezone(tz.UTC).strftime(format)))
-    if local:
-        print(
-            dt_format.format('Local:',
-                             guess.astimezone(tz.tzlocal()).strftime(format)))
-    if remote:
-        print(
-            dt_format.format(
-                'Remote:',
-                guess.astimezone(tz.gettz(timezone)).strftime(format)))
-    if usec:
-        print(dt_format.format('Seconds:', int(guess.timestamp())))
-    if umilli:
-        print(dt_format.format('Millis:', int(guess.timestamp() * 1e3)))
-    if umicro:
-        print(dt_format.format('Micros:', int(guess.timestamp() * 1e6)))
+    print(format_parse(parse[0], parse[1], tz.tzlocal(), confidence, utc, local, remote, timezone,
+                       format, usec, umilli, umicro, label))
+
 
 
 if __name__ == '__main__':

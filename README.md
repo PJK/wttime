@@ -36,9 +36,9 @@ wttime --help
 
 ## TODOs
 
-- add more output options
 - get more data about format frequency in the wild
-- refactor main to pull out logic and test it
+- figure out how to get feedback
+- think about date TZ treatment (currently using *local* midnight)
 
 ## Development
 
