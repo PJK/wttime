@@ -1,5 +1,7 @@
 # wttime - A fuzzy time parser
 
+![Lint and test](https://github.com/PJK/wttime/workflows/Tests/badge.svg?branch=master)
+
 **DISCLAIMER:** At this point, the code is a dirty initial sketch of what I want
  to build. Assume I have no idea what I'm doing.
 
