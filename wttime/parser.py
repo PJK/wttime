@@ -8,7 +8,8 @@ class Parser:
     strategies = [
         SecondsTimestampStrategy(),
         MillisTimestampStrategy(),
-        MicrosTimestampStrategy()
+        MicrosTimestampStrategy(),
+        FormatStringStrategy(),
     ]
 
     @staticmethod
@@ -48,16 +49,14 @@ class Parser:
 
     @staticmethod
     def with_likelihood(now: datetime, parse_result):
-        if parse_result:
-            confidence, result = parse_result
-            return confidence * Parser.instant_likelihood(now, result), result
+        confidence, result = parse_result
+        return confidence * Parser.instant_likelihood(now, result), result
 
     def parse(self, now, timespec: str) -> Tuple[float, datetime]:
-        parses = [
-            Parser.with_likelihood(now, strategy.parse(timespec))
-            for strategy in self.strategies
-        ]
-        guesses = list(filter(None, parses))
-        guesses.sort(key=lambda g: g[0], reverse=True)
-        if guesses:
-            return guesses[0]
+        parses = []
+        for strategy in self.strategies:
+            for parse in strategy.parse(timespec):
+                parses.append(Parser.with_likelihood(now, parse))
+        parses.sort(key=lambda g: g[0], reverse=True)
+        if parses:
+            return parses[0]
