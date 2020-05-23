@@ -1,6 +1,7 @@
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Tuple, List, Optional
+from dateutil.parser import parse as du_parse
 
 
 class Strategy(ABC):
@@ -96,3 +97,15 @@ class FormatStringStrategy(Strategy):
             except ValueError:
                 pass
         return parses
+
+
+class DateutilStrategy(Strategy):
+    def parse(self, timespec: str) -> List[Tuple[float, datetime]]:
+        try:
+            parse, skipped = du_parse(timespec, fuzzy=True, fuzzy_with_tokens=True)
+            # Slightly discount magic w.r.t. FormatStringStrategy
+            confidence = (1/2) ** len(skipped) * 99.
+            return [(confidence, parse)]
+        except ValueError:
+            return []
+

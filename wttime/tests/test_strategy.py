@@ -3,8 +3,8 @@ from datetime import datetime
 from wttime.strategy import SecondsTimestampStrategy, FormatStringStrategy
 
 
-def _assert_one(actual, expected):
-    assert actual == [(100., expected)]
+def _assert_one(actual, expected, expected_confidence=100.):
+    assert actual == [(expected_confidence, expected)]
 
 
 def test_parses_int():
