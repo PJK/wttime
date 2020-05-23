@@ -36,12 +36,17 @@ wttime --help
 
 ## TODOs
 
-- add parsers for standard timestrings
 - add more output options
 - get more data about format frequency in the wild
 - refactor main to pull out logic and test it
 
 ## Development
+
+### Add pre-commit hooks:
+
+```
+ln -sf $(pwd)/misc/hooks/pre-commit .git/hooks
+```
 
 ### Run tests
 

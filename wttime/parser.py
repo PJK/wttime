@@ -1,7 +1,9 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+from typing import Tuple, Optional
 import math
 
-from wttime.strategy import *
+from wttime.strategy import SecondsTimestampStrategy, MillisTimestampStrategy, \
+    MicrosTimestampStrategy, FormatStringStrategy, DateutilStrategy
 
 
 class Parser:
@@ -10,7 +12,7 @@ class Parser:
         MillisTimestampStrategy,
         MicrosTimestampStrategy,
         FormatStringStrategy,
-        DateutilStrategy
+        DateutilStrategy,
     ]
 
     @staticmethod
@@ -57,7 +59,7 @@ class Parser:
     def parse(self, now: datetime, timespec: str) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.STRATEGIES:
-            for parse in strategy(now).parse(timespec):
+            for parse in strategy(now).parse(timespec):  # type: ignore
                 parses.append(Parser.with_likelihood(now, parse))
         parses.sort(key=lambda g: g[0], reverse=True)
         if parses:

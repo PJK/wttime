@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from wttime.strategy import *
+from wttime.strategy import SecondsTimestampStrategy, MillisTimestampStrategy, \
+    MicrosTimestampStrategy, FormatStringStrategy, DateutilStrategy
 
 _NOW = datetime(2020, 3, 1)
 

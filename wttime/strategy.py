@@ -1,6 +1,6 @@
 from datetime import datetime
 from abc import ABC, abstractmethod
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 from dateutil.parser import parse as du_parse
 
 
@@ -109,11 +109,13 @@ class DateutilStrategy(Strategy):
             # 'Tuesday' should still be pinned to the current date. Find out the actual parse
             # spec used and adjust
             reference = self.now.replace(hour=0, minute=0, second=0, microsecond=0)
-            parse, skipped = du_parse(timespec,
-                                      default=reference, fuzzy=True, fuzzy_with_tokens=True)
+            parse: datetime
+            skipped: Tuple[str]
+            parse, skipped = du_parse(timespec,   # type: ignore
+                                      default=reference, fuzzy=True,
+                                      fuzzy_with_tokens=True)
             # Slightly discount magic w.r.t. FormatStringStrategy, ignore single whitespaces
             confidence = (1/2) ** len([tok for tok in skipped if tok != ' ']) * 99.
             return [(confidence, parse)]
         except ValueError:
             return []
-

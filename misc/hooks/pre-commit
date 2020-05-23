@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+flake8 wttime bin --count --select=E9,F63,F7,F82 --show-source
+flake8 wttime bin --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+mypy wttime bin/*
+pytest
