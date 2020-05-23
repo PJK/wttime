@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime
 from typing import Tuple, Optional
 import math
+import dateutil.tz as tz
 
 from wttime.strategy import SecondsTimestampStrategy, MillisTimestampStrategy, \
     MicrosTimestampStrategy, FormatStringStrategy, DateutilStrategy
@@ -35,11 +36,12 @@ class Parser:
         def logcurve(max_value: float, midpoint: float, slope: float, x: float) -> float:
             return max_value / (1 + math.exp(-slope * (x - midpoint)))
 
-        y2k = datetime(2000, 1, 1).timestamp()
+        y2k = datetime(2000, 1, 1, tzinfo=tz.tzutc()).timestamp()
         horizon = timedelta(days=365)
         instant_secs = instant.timestamp()
 
-        if instant <= datetime.fromtimestamp(0):
+        print(instant)
+        if instant <= datetime.fromtimestamp(0, tz=tz.tzutc()):
             return logcurve(0.2 * 2, 0, 1. / y2k, instant_secs)
         elif instant <= now:
             return 0.2 + instant_secs / now.timestamp() * 0.8
@@ -56,10 +58,11 @@ class Parser:
         confidence, result = parse_result
         return confidence * Parser.instant_likelihood(now, result), result
 
-    def parse(self, now: datetime, timespec: str) -> Optional[Tuple[float, datetime]]:
+    def parse(self, now: datetime, timespec: str,
+              timezone: tz.tzlocal) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.STRATEGIES:
-            for parse in strategy(now).parse(timespec):  # type: ignore
+            for parse in strategy(now, timezone).parse(timespec):  # type: ignore
                 parses.append(Parser.with_likelihood(now, parse))
         parses.sort(key=lambda g: g[0], reverse=True)
         if parses:

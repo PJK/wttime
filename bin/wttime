@@ -30,13 +30,17 @@ from typing import Optional
               default=False,
               show_default=True,
               help='Show the result in the time zone specified by '
-              '--timezone.')
-@click.option('--timezone',
-              '-t',
+              '--remote-timezone.')
+@click.option('--remote-timezone',
               default='America/Los_Angeles',
               show_default=True,
-              help='Supplementary timezone to use for --remote, given in '
-              'the "tz database" format.')
+              help='Supplementary timezone to use for --remote, given in the "tz database" format.')
+@click.option('--timezone',
+              '-t',
+              default=None,
+              show_default=True,
+              help='Timezone to interpret timestrings that do not have an explicit timezone. '
+                   'Defaults to the local timezone.')
 @click.option('--format',
               '-f',
               default='%Y-%m-%d %H:%M:%S (%z)',
@@ -66,7 +70,7 @@ from typing import Optional
               help='Print a label in front of each output.')
 @click.argument('timestring', required=False)
 def parse(confidence: bool, utc: bool, local: bool, remote: bool,
-          timezone: str, format: str,
+          remote_timezone: str, timezone: Optional[str], format: str,
           usec: bool, umilli: bool, umicro: bool,
           label: bool,
           timestring: Optional[str]) -> None:
@@ -84,14 +88,22 @@ def parse(confidence: bool, utc: bool, local: bool, remote: bool,
     if not timestring:
         return
 
-    parse = Parser().parse(datetime.now(), timestring)
+    base_timezone: tz.tzlocal
+    if timezone is None:
+        base_timezone = tz.tzlocal()
+    else:
+        base_timezone = tz.gettz(timezone)  # type: ignore
+        if base_timezone is None:
+            raise click.BadParameter("Couldn't parse timezone")
+
+    parse = Parser().parse(datetime.now(tz=tz.tzlocal()), timestring, base_timezone)
     if not parse:
         print("Couldn't parse the input. Please file a bug at "
               "https://github.com/PJK/wttime/issues if I should have.")
         sys.exit(1)
 
-    print(format_parse(parse[0], parse[1], tz.tzlocal(), confidence, utc, local, remote, timezone,
-                       format, usec, umilli, umicro, label))
+    print(format_parse(parse[0], parse[1], tz.tzlocal(), confidence, utc, local, remote,
+                       remote_timezone, format, usec, umilli, umicro, label))
 
 
 

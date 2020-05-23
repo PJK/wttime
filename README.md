@@ -38,7 +38,6 @@ wttime --help
 
 - get more data about format frequency in the wild
 - figure out how to get feedback
-- think about date TZ treatment (currently using *local* midnight)
 
 ## Development
 

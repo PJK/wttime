@@ -2,11 +2,13 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 from dateutil.parser import parse as du_parse
+import dateutil.tz as tz
 
 
 class Strategy(ABC):
-    def __init__(self, now: datetime):
+    def __init__(self, now: datetime, timezone: tz.tzlocal):
         self.now = now
+        self.timezone = timezone
 
     """Parses a string into a datetime and assigns it a confidence level.
 
@@ -59,7 +61,7 @@ class SecondsTimestampStrategy(TimestampStrategy):
         # Most second timestamps are integers
         return (
             100. if int(timestamp) == timestamp else 70.,
-            datetime.fromtimestamp(timestamp)
+            datetime.fromtimestamp(timestamp, tz=self.timezone)
         )
 
 
@@ -71,7 +73,7 @@ class MillisTimestampStrategy(TimestampStrategy):
         else:
             confidence = 70.
 
-        return confidence, datetime.fromtimestamp(timestamp / 1e3)
+        return confidence, datetime.fromtimestamp(timestamp / 1e3, tz=self.timezone)
 
 
 class MicrosTimestampStrategy(TimestampStrategy):
@@ -82,7 +84,7 @@ class MicrosTimestampStrategy(TimestampStrategy):
         else:
             confidence = 70.
 
-        return confidence, datetime.fromtimestamp(timestamp / 1e6)
+        return confidence, datetime.fromtimestamp(timestamp / 1e6, tz=self.timezone)
 
 
 class FormatStringStrategy(Strategy):
@@ -96,7 +98,8 @@ class FormatStringStrategy(Strategy):
         parses = []
         for fmt in self.COMMON_FORMATS:
             try:
-                parses.append((100., datetime.strptime(timespec, fmt)))
+                parses.append((100.,
+                               datetime.strptime(timespec, fmt).replace(tzinfo=self.timezone)))
             except ValueError:
                 pass
         return parses
@@ -108,7 +111,8 @@ class DateutilStrategy(Strategy):
             # TODO: This clipping is suboptimal, e.g. 2020 should probably be 2020-01-01, but
             # 'Tuesday' should still be pinned to the current date. Find out the actual parse
             # spec used and adjust
-            reference = self.now.replace(hour=0, minute=0, second=0, microsecond=0)
+            reference = self.now.replace(hour=0, minute=0, second=0, microsecond=0,
+                                         tzinfo=self.timezone)
             parse: datetime
             skipped: Tuple[str]
             parse, skipped = du_parse(timespec,   # type: ignore
