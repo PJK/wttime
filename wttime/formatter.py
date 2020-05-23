@@ -1,10 +1,10 @@
 import dateutil.tz as tz
-from datetime import datetime
+from datetime import datetime, tzinfo
 
 
-def format_parse(guess_confidence: float, guess: datetime, tzlocal: tz.tzlocal,
+def format_parse(guess_confidence: float, guess: datetime, tzlocal: tzinfo,
                  confidence: bool, utc: bool, local: bool, remote: bool,
-                 timezone: str, format: str,
+                 remote_timezone: tzinfo, format: str,
                  usec: bool, umilli: bool, umicro: bool,
                  label: bool) -> str:
     result = []
@@ -17,7 +17,7 @@ def format_parse(guess_confidence: float, guess: datetime, tzlocal: tz.tzlocal,
         result.append(dt_format.format('Local:', guess.astimezone(tzlocal).strftime(format)))
     if remote:
         result.append(
-            dt_format.format('Remote:', guess.astimezone(tz.gettz(timezone)).strftime(format)))
+            dt_format.format('Remote:', guess.astimezone(remote_timezone).strftime(format)))
     if usec:
         result.append(dt_format.format('Seconds:', int(guess.timestamp())))
     if umilli:

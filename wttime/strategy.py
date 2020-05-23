@@ -1,12 +1,11 @@
-from datetime import datetime
+from datetime import datetime, tzinfo
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 from dateutil.parser import parse as du_parse
-import dateutil.tz as tz
 
 
 class Strategy(ABC):
-    def __init__(self, now: datetime, timezone: tz.tzlocal):
+    def __init__(self, now: datetime, timezone: tzinfo):
         self.now = now
         self.timezone = timezone
 

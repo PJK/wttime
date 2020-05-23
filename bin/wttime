@@ -39,8 +39,8 @@ from typing import Optional
               '-t',
               default=None,
               show_default=True,
-              help='Timezone to interpret timestrings that do not have an explicit timezone. '
-                   'Defaults to the local timezone.')
+              help='Timezone to interpret timestrings that do not have an explicit timezone, '
+                   'given in the "tz database" format. Defaults to the local timezone.')
 @click.option('--format',
               '-f',
               default='%Y-%m-%d %H:%M:%S (%z)',
@@ -88,14 +88,7 @@ def parse(confidence: bool, utc: bool, local: bool, remote: bool,
     if not timestring:
         return
 
-    base_timezone: tz.tzlocal
-    if timezone is None:
-        base_timezone = tz.tzlocal()
-    else:
-        base_timezone = tz.gettz(timezone)  # type: ignore
-        if base_timezone is None:
-            raise click.BadParameter("Couldn't parse timezone")
-
+    base_timezone = Parser.parse_tz(timezone) if timezone else tz.tzlocal()
     parse = Parser().parse(datetime.now(tz=tz.tzlocal()), timestring, base_timezone)
     if not parse:
         print("Couldn't parse the input. Please file a bug at "
@@ -103,7 +96,7 @@ def parse(confidence: bool, utc: bool, local: bool, remote: bool,
         sys.exit(1)
 
     print(format_parse(parse[0], parse[1], tz.tzlocal(), confidence, utc, local, remote,
-                       remote_timezone, format, usec, umilli, umicro, label))
+                       Parser.parse_tz(remote_timezone), format, usec, umilli, umicro, label))
 
 
 

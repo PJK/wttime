@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 from typing import Tuple, Optional
 import math
 import dateutil.tz as tz
+from datetime import tzinfo
 
 from wttime.strategy import SecondsTimestampStrategy, MillisTimestampStrategy, \
     MicrosTimestampStrategy, FormatStringStrategy, DateutilStrategy
@@ -15,6 +16,13 @@ class Parser:
         FormatStringStrategy,
         DateutilStrategy,
     ]
+
+    @staticmethod
+    def parse_tz(spec: str) -> tzinfo:
+        timezone = tz.gettz(spec)
+        if timezone is None:
+            raise ValueError("Couldn't parse timezone spec: " + spec)
+        return timezone
 
     @staticmethod
     def instant_likelihood(now: datetime, instant: datetime) -> float:
@@ -59,7 +67,7 @@ class Parser:
         return confidence * Parser.instant_likelihood(now, result), result
 
     def parse(self, now: datetime, timespec: str,
-              timezone: tz.tzlocal) -> Optional[Tuple[float, datetime]]:
+              timezone: tzinfo) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.STRATEGIES:
             for parse in strategy(now, timezone).parse(timespec):  # type: ignore

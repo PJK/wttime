@@ -9,7 +9,7 @@ _TZ = tz.gettz('America/New_York')
 
 def test_format_parse():
     res = format_parse(95., datetime(2020, 3, 1, 22, 35, 1, 5, _TZ), _TZ, True,
-                       True, True, True, 'America/Los_Angeles', '%Y-%m-%d %H:%M:%S (%z)',
+                       True, True, True, tz.gettz('America/Los_Angeles'), '%Y-%m-%d %H:%M:%S (%z)',
                        True, True, True, True)
     print(res)
     assert res == \
