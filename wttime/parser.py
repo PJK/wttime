@@ -26,14 +26,14 @@ class Parser:
         This is implemented as a combination of linear and logistic functions:
         - (-infty, epoch start] - half-sigmoid -> (0, 0.2]
         - (epoch start, T] - linear -> (0.2, 1]
-        - (T, T + 60 days] - linear -> (1, 0.3]
-        - (T + 60 days, infty) - half-sigmoid -> (0.3, 0)
+        - (T, T + 365 days] - linear -> (1, 0.3]
+        - (T + 365 days, infty) - half-sigmoid -> (0.3, 0)
         """
         def logcurve(max_value, midpoint, slope, x):
             return max_value / (1 + math.exp(-slope * (x - midpoint)))
 
         y2k = datetime(2000, 1, 1).timestamp()
-        horizon = timedelta(days=60)
+        horizon = timedelta(days=365)
         instant_secs = instant.timestamp()
 
         if instant <= datetime.fromtimestamp(0):
