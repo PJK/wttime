@@ -5,6 +5,7 @@ import sys
 import dateutil.tz as tz
 from datetime import datetime
 from wttime.parser import Parser
+from typing import Optional
 
 
 @click.command()
@@ -62,8 +63,12 @@ from wttime.parser import Parser
               show_default=True,
               help='Print a label in front of each output.')
 @click.argument('timestring', required=False)
-def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
-          umicro, label, timestring):
+def parse(confidence: float,
+          utc: bool, local: bool, remote: bool,
+          timezone: str, format: str,
+          usec: bool, umilli: bool, umicro: bool,
+          label: bool,
+          timestring: Optional[str]) -> None:
     """Fuzzily parse TIMESTRING and print the result."""
     dt_format = '{0: <8} {1}' if label else '{1}'
 

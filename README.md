@@ -40,7 +40,6 @@ wttime --help
 - add more output options
 - get more data about format frequency in the wild
 - refactor main to pull out logic and test it
-- add type annotations and start checking
 
 ## Development
 

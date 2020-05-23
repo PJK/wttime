@@ -39,10 +39,10 @@ class Strategy(ABC):
 
 class TimestampStrategy(Strategy):
     @abstractmethod
-    def parse_timestamp(self, timestamp: float):
+    def parse_timestamp(self, timestamp: float) -> Tuple[float, datetime]:
         pass
 
-    def parse(self, timespec):
+    def parse(self, timespec: str) -> List[Tuple[float, datetime]]:
         try:
             # TODO: Handle non-decimals etc.
             return [self.parse_timestamp(float(timespec))]
@@ -51,7 +51,7 @@ class TimestampStrategy(Strategy):
 
 
 class SecondsTimestampStrategy(TimestampStrategy):
-    def parse_timestamp(self, timestamp: float):
+    def parse_timestamp(self, timestamp: float) -> Tuple[float, datetime]:
         # Most second timestamps are integers
         return (
             100. if int(timestamp) == timestamp else 70.,
@@ -60,7 +60,7 @@ class SecondsTimestampStrategy(TimestampStrategy):
 
 
 class MillisTimestampStrategy(TimestampStrategy):
-    def parse_timestamp(self, timestamp: float):
+    def parse_timestamp(self, timestamp: float) -> Tuple[float, datetime]:
         # Prefer integers, prefer multiples of 1000
         if int(timestamp) == timestamp:
             confidence = 100. if timestamp % 1e3 == 0 else 90.
@@ -71,7 +71,7 @@ class MillisTimestampStrategy(TimestampStrategy):
 
 
 class MicrosTimestampStrategy(TimestampStrategy):
-    def parse_timestamp(self, timestamp: float):
+    def parse_timestamp(self, timestamp: float) -> Tuple[float, datetime]:
         # Prefer integers, prefer multiples of 1000000
         if int(timestamp) == timestamp:
             confidence = 100. if timestamp % 1e6 == 0 else 90.

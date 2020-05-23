@@ -28,7 +28,7 @@ jobs:
     - name: Check with mypy
       run: |
         pip install mypy
-        mypy .
+        mypy wttime bin/*
     - name: Test with pytest
       run: |
         pip install pytest

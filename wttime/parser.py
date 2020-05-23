@@ -29,7 +29,7 @@ class Parser:
         - (T, T + 365 days] - linear -> (1, 0.3]
         - (T + 365 days, infty) - half-sigmoid -> (0.3, 0)
         """
-        def logcurve(max_value, midpoint, slope, x):
+        def logcurve(max_value: float, midpoint: float, slope: float, x: float) -> float:
             return max_value / (1 + math.exp(-slope * (x - midpoint)))
 
         y2k = datetime(2000, 1, 1).timestamp()
@@ -48,11 +48,12 @@ class Parser:
                                   instant_secs)
 
     @staticmethod
-    def with_likelihood(now: datetime, parse_result):
+    def with_likelihood(now: datetime,
+                        parse_result: Tuple[float, datetime]) -> Tuple[float, datetime]:
         confidence, result = parse_result
         return confidence * Parser.instant_likelihood(now, result), result
 
-    def parse(self, now, timespec: str) -> Optional[Tuple[float, datetime]]:
+    def parse(self, now: datetime, timespec: str) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.strategies:
             for parse in strategy.parse(timespec):
@@ -60,3 +61,4 @@ class Parser:
         parses.sort(key=lambda g: g[0], reverse=True)
         if parses:
             return parses[0]
+        return None
