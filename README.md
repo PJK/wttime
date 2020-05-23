@@ -49,6 +49,19 @@ $ wttime -nx 20200810 -ns -y
 wttime --help
 ```
 
+### FAQ 
+
+#### How is this better than [dateutil](https://dateutil.readthedocs.io/en/stable/parser.html#dateutil.parser.parse)?
+
+wttime can also handle timestamps, disambiguate more formats, and be used in from the shell. It does
+use dateutil under the hood.
+
+#### What is the deal with 'remote timezone'?
+
+It is (unfortunately) common that companies or systems operate globally in a default timezone that 
+is not UTC. In those cases, using an extra timezone can be convenient.
+ 
+
 ## TODOs
 
 - get more data about format frequency in the wild
