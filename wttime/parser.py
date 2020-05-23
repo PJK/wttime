@@ -5,11 +5,11 @@ from wttime.strategy import *
 
 
 class Parser:
-    strategies = [
-        SecondsTimestampStrategy(),
-        MillisTimestampStrategy(),
-        MicrosTimestampStrategy(),
-        FormatStringStrategy(),
+    STRATEGIES = [
+        SecondsTimestampStrategy,
+        MillisTimestampStrategy,
+        MicrosTimestampStrategy,
+        FormatStringStrategy,
     ]
 
     @staticmethod

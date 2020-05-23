@@ -5,13 +5,16 @@ from dateutil.parser import parse as du_parse
 
 
 class Strategy(ABC):
+    def __init__(self, now: datetime):
+        self.now = now
+
     """Parses a string into a datetime and assigns it a confidence level.
 
     TODO: This design is completely arbitrary and the first thing that came
           to my mind.
     Confidence level guidance:
     (-infty, 0]
-        Bad parse (consider returning None)
+        Bad parse (consider returning no result)
     (0, 25]
         Unlikely fuzzy match; some fixing/coercion has been applied
     (25, 50]
@@ -102,7 +105,8 @@ class FormatStringStrategy(Strategy):
 class DateutilStrategy(Strategy):
     def parse(self, timespec: str) -> List[Tuple[float, datetime]]:
         try:
-            parse, skipped = du_parse(timespec, fuzzy=True, fuzzy_with_tokens=True)
+            parse, skipped = du_parse(timespec,
+                                      default=self.now, fuzzy=True, fuzzy_with_tokens=True)
             # Slightly discount magic w.r.t. FormatStringStrategy
             confidence = (1/2) ** len(skipped) * 99.
             return [(confidence, parse)]
