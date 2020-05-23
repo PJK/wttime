@@ -18,5 +18,5 @@ setup(name='wttime',
             'click',
             'python-dateutil'
       ],
-      tests_require=['pytest'],
+      tests_require=['pytest', 'mypy'],
       zip_safe=False)
