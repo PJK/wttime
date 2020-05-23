@@ -10,6 +10,7 @@ class Parser:
         MillisTimestampStrategy,
         MicrosTimestampStrategy,
         FormatStringStrategy,
+        DateutilStrategy
     ]
 
     @staticmethod
@@ -55,8 +56,8 @@ class Parser:
 
     def parse(self, now: datetime, timespec: str) -> Optional[Tuple[float, datetime]]:
         parses = []
-        for strategy in self.strategies:
-            for parse in strategy.parse(timespec):
+        for strategy in self.STRATEGIES:
+            for parse in strategy(now).parse(timespec):
                 parses.append(Parser.with_likelihood(now, parse))
         parses.sort(key=lambda g: g[0], reverse=True)
         if parses:

@@ -105,10 +105,14 @@ class FormatStringStrategy(Strategy):
 class DateutilStrategy(Strategy):
     def parse(self, timespec: str) -> List[Tuple[float, datetime]]:
         try:
+            # TODO: This clipping is suboptimal, e.g. 2020 should probably be 2020-01-01, but
+            # 'Tuesday' should still be pinned to the current date. Find out the actual parse
+            # spec used and adjust
+            reference = self.now.replace(hour=0, minute=0, second=0, microsecond=0)
             parse, skipped = du_parse(timespec,
-                                      default=self.now, fuzzy=True, fuzzy_with_tokens=True)
-            # Slightly discount magic w.r.t. FormatStringStrategy
-            confidence = (1/2) ** len(skipped) * 99.
+                                      default=reference, fuzzy=True, fuzzy_with_tokens=True)
+            # Slightly discount magic w.r.t. FormatStringStrategy, ignore single whitespaces
+            confidence = (1/2) ** len([tok for tok in skipped if tok != ' ']) * 99.
             return [(confidence, parse)]
         except ValueError:
             return []
