@@ -53,3 +53,6 @@ def test_dateutil_strategy():
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('Notaday 2020-8-10'), utc_midnight(2020, 8, 10), 49.5)
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('Notaday 2020-8-10, etc'),
                 utc_midnight(2020, 8, 10), 24.75)
+
+    assert DateutilStrategy(_NOW, _TZ).parse('rubbish') == []
+    assert DateutilStrategy(_NOW, _TZ).parse('2020081900000') == []

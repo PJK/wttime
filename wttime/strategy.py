@@ -122,3 +122,5 @@ class DateutilStrategy(Strategy):
             return [(confidence, parse.astimezone(self.timezone))]
         except ValueError:
             return []
+        except OverflowError:
+            return []

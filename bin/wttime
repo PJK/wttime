@@ -17,6 +17,7 @@ from typing import Optional
               show_default=True,
               help='Show the confidence level of the chosen interpretation.')
 @click.option('--utc/--no-utc',
+              '-s/-ns',
               default=True,
               show_default=True,
               help='Show the result in UTC.')
