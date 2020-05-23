@@ -34,7 +34,6 @@ wttime --help
 
 ## TODOs
 
-- add CI
 - add parsers for standard timestrings
 - add more output options
 - get more data about format frequency in the wild
