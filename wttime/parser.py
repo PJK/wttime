@@ -48,7 +48,6 @@ class Parser:
         horizon = timedelta(days=365)
         instant_secs = instant.timestamp()
 
-        print(instant)
         if instant <= datetime.fromtimestamp(0, tz=tz.tzutc()):
             return logcurve(0.2 * 2, 0, 1. / y2k, instant_secs)
         elif instant <= now:
