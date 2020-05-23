@@ -52,7 +52,7 @@ class Parser:
         confidence, result = parse_result
         return confidence * Parser.instant_likelihood(now, result), result
 
-    def parse(self, now, timespec: str) -> Tuple[float, datetime]:
+    def parse(self, now, timespec: str) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.strategies:
             for parse in strategy.parse(timespec):

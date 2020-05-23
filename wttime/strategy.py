@@ -47,7 +47,7 @@ class TimestampStrategy(Strategy):
             # TODO: Handle non-decimals etc.
             return [self.parse_timestamp(float(timespec))]
         except ValueError:
-            return None
+            return []
 
 
 class SecondsTimestampStrategy(TimestampStrategy):
@@ -87,7 +87,7 @@ class FormatStringStrategy(Strategy):
         '%Y-%m-%d',
         '%d.%m.%Y',
     ]
-    
+
     def parse(self, timespec: str) -> List[Tuple[float, datetime]]:
         parses = []
         for fmt in self.COMMON_FORMATS:

@@ -79,8 +79,13 @@ def parse(confidence, utc, local, remote, timezone, format, usec, umilli,
     if not timestring:
         return
 
-    # TODO: Handle failures to parse at all
-    guess_confidence, guess = Parser().parse(datetime.now(), timestring)
+    parse = Parser().parse(datetime.now(), timestring)
+    if not parse:
+        print("Couldn't parse the input. Please file a bug at "
+              "https://github.com/PJK/wttime/issues if I should have.")
+        sys.exit(1)
+
+    guess_confidence, guess = parse
     if confidence:
         print('Confidence: %.10f' % guess_confidence)
     if utc:
