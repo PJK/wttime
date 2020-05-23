@@ -120,6 +120,6 @@ class DateutilStrategy(Strategy):
                                       fuzzy_with_tokens=True)
             # Slightly discount magic w.r.t. FormatStringStrategy, ignore single whitespaces
             confidence = (1/2) ** len([tok for tok in skipped if tok != ' ']) * 99.
-            return [(confidence, parse)]
+            return [(confidence, parse.astimezone(self.timezone))]
         except ValueError:
             return []

@@ -39,6 +39,11 @@ def test_dateutil_strategy():
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('2020-08-10'), utc_midnight(2020, 8, 10), 99.)
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('2020-8-10'), utc_midnight(2020, 8, 10), 99.)
 
+    _assert_one(DateutilStrategy(_NOW, _TZ).parse('2020-8-10 02:00:00 -02'),
+                datetime(2020, 8, 10, 4, tzinfo=_TZ), 99.)
+    _assert_one(DateutilStrategy(_NOW, _TZ).parse('2020-8-10 02:00:00'),
+                datetime(2020, 8, 10, 2, tzinfo=_TZ), 99.)
+
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('Tuesday'), utc_midnight(2020, 3, 3), 99.)
     _assert_one(DateutilStrategy(_NOW, _TZ).parse('Tuesday 9pm'), datetime(2020, 3, 3, 21, tzinfo=_TZ), 99.)
 
