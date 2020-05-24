@@ -1,5 +1,6 @@
 from datetime import timedelta
 import pytest
+import dateutil.tz as tz
 
 from wttime.tests.util import utc_midnight
 from wttime.parser import Parser
@@ -7,7 +8,7 @@ from wttime.parser import Parser
 
 def test_instant_likelihood():
     def likelihood(date):
-        return Parser.instant_likelihood(utc_midnight(2019, 1, 1), date)
+        return Parser(utc_midnight(2019, 1, 1), tz.tzlocal()).instant_likelihood(date)
 
     assert likelihood(utc_midnight(1500, 1, 1)) < 0.2
     assert likelihood(utc_midnight(1970, 1, 1)) == pytest.approx(0.2, abs=1e4)
@@ -17,3 +18,5 @@ def test_instant_likelihood():
     assert likelihood(utc_midnight(2019, 1, 1) +
                       timedelta(days=60)) == pytest.approx(0.3, abs=1e4)
     assert likelihood(utc_midnight(2050, 1, 1)) < 0.3
+
+# TODO test parse

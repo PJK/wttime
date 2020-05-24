@@ -17,6 +17,10 @@ class Parser:
         DateutilStrategy,
     ]
 
+    def __init__(self, now: datetime, timezone: tzinfo):
+        self.now = now
+        self.timezone = timezone
+
     @staticmethod
     def parse_tz(spec: str) -> tzinfo:
         timezone = tz.gettz(spec)
@@ -24,8 +28,7 @@ class Parser:
             raise ValueError("Couldn't parse timezone spec: " + spec)
         return timezone
 
-    @staticmethod
-    def instant_likelihood(now: datetime, instant: datetime) -> float:
+    def instant_likelihood(self, instant: datetime) -> float:
         """Given a time, estimates the likelihood (0, 1] that this is a real
         timestamp.
 
@@ -50,28 +53,24 @@ class Parser:
 
         if instant <= datetime.fromtimestamp(0, tz=tz.tzutc()):
             return logcurve(0.2 * 2, 0, 1. / y2k, instant_secs)
-        elif instant <= now:
-            return 0.2 + instant_secs / now.timestamp() * 0.8
-        elif instant <= now + horizon:
-            return 1 - 0.7 * (instant_secs - now.timestamp()) / \
-                   horizon.total_seconds()
+        elif instant <= self.now:
+            return 0.2 + instant_secs / self.now.timestamp() * 0.8
+        elif instant <= self.now + horizon:
+            return 1 - 0.7 * (instant_secs - self.now.timestamp()) / horizon.total_seconds()
         else:
-            return 0.3 - logcurve(0.3, (now + horizon).timestamp(), 1. / y2k,
-                                  instant_secs)
+            return 0.3 - logcurve(0.3, (self.now + horizon).timestamp(), 1. / y2k, instant_secs)
 
-    @staticmethod
-    def with_likelihood(now: datetime,
-                        parse_result: Tuple[float, datetime]) -> Tuple[float, datetime]:
+    def with_likelihood(self, parse_result: Tuple[float, datetime]) -> Tuple[float, datetime]:
         confidence, result = parse_result
-        return confidence * Parser.instant_likelihood(now, result), result
+        return confidence * self.instant_likelihood(result), result
 
-    def parse(self, now: datetime, timespec: str,
-              timezone: tzinfo) -> Optional[Tuple[float, datetime]]:
+    def parse(self, timespec: str) -> Optional[Tuple[float, datetime]]:
         parses = []
         for strategy in self.STRATEGIES:
-            for parse in strategy(now, timezone).parse(timespec):  # type: ignore
-                parses.append(Parser.with_likelihood(now, parse))
+            for parse in strategy(self.now, self.timezone).parse(timespec):  # type: ignore
+                parses.append(self.with_likelihood(parse))
         parses.sort(key=lambda g: g[0], reverse=True)
+        # TODO consider returning more alternatives
         if parses:
             return parses[0]
         return None

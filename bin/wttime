@@ -4,9 +4,10 @@ import click
 import sys
 import dateutil.tz as tz
 
+from itertools import chain
 from datetime import datetime
 from wttime.parser import Parser
-from wttime.formatter import format_parse
+from wttime.cli import CLI
 from typing import Optional, List
 
 
@@ -69,30 +70,22 @@ from typing import Optional, List
               default=True,
               show_default=True,
               help='Print a label in front of each output.')
-@click.argument('timestring', nargs=-1)
+@click.argument('timespec', nargs=-1)
 def parse(confidence: bool, utc: bool, local: bool, remote: bool,
           remote_timezone: str, timezone: Optional[str], format: str,
           usec: bool, umilli: bool, umicro: bool,
           label: bool,
-          timestrings: List[str]) -> None:
-    """Fuzzily parse TIMESTRING and print the result."""
+          timespec: List[str]) -> None:
+    """Fuzzily parse TIMESPEC and print the result."""
 
-    stdin_timestring = sys.stdin.readline() if not sys.stdin.isatty() else ''
-    if timestrings and stdin_timestring:
-        click.echo('WARNING: TIMESTRING(s) both on the STDIN and passed as an argument.', err=True)
-    timestrings = timestrings or stdin_timestring.split()
+    stdin = sys.stdin if not sys.stdin.isatty() else []
+    parser = Parser(datetime.now(tz=tz.tzlocal()),
+                    Parser.parse_tz(timezone) if timezone else tz.tzlocal())
+    cli = CLI(parser, tz.tzlocal(), confidence, utc, local, remote,
+                           Parser.parse_tz(remote_timezone), format, usec, umilli, umicro, label)
 
-    for timestring in timestrings:
-        base_timezone = Parser.parse_tz(timezone) if timezone else tz.tzlocal()
-        parse = Parser().parse(datetime.now(tz=tz.tzlocal()), timestring, base_timezone)
-        if not parse:
-            print("Couldn't parse the input. Please file a bug at "
-                  "https://github.com/PJK/wttime/issues if I should have.")
-            sys.exit(1)
-
-        print(format_parse(parse[0], parse[1], tz.tzlocal(), confidence, utc, local, remote,
-                           Parser.parse_tz(remote_timezone), format, usec, umilli, umicro, label))
-
+    for ts in chain(timespec, stdin):
+        cli.parse(ts)
 
 
 if __name__ == '__main__':
