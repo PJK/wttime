@@ -18,19 +18,22 @@ pip install wttime
 
 ### Examples
 
-Guessing the most likely meaning:
+Disambiguate various time specifications: 
 ```sh
-$ wttime -t 'America/Los_Angeles' 20200101
-UTC:     2020-01-01 08:00:00 (+0000)
-$ wttime 1231231233000000
+$ wttime -t UTC 1231231233 1231231233000 1231231233000000 
 UTC:     2009-01-06 08:40:33 (+0000)
-$ wttime 1231231233000
 UTC:     2009-01-06 08:40:33 (+0000)
-$ wttime 'Tuesday 10pm'
-UTC:     2020-05-26 20:00:00 (+0000)
+UTC:     2009-01-06 08:40:33 (+0000)
+
+$ wttime -t UTC 90000000 20200102 2020-01-02 "Nov 15" "Tuesday 10pm"
+UTC:     1972-11-07 16:00:00 (+0000)
+UTC:     2020-01-02 00:00:00 (+0000)
+UTC:     2020-01-02 00:00:00 (+0000)
+UTC:     2020-11-15 00:00:00 (+0000)
+UTC:     2020-05-26 22:00:00 (+0000)
 ```
 
-Variety of output formats:
+Flexible output formatting:
 ```sh
 $ wttime -l -r --remote-timezone 'America/Chicago' -f '%Y-%m-%d %H:%M' -umy 1231231233000000
 UTC:     2009-01-06 08:40
@@ -40,8 +43,14 @@ Seconds: 1231231233
 Millis:  1231231233000
 Micros:  1231231233000000
 
-$ wttime -nx 20200810 -ns -y
+$ wttime -nx -ns -y 20200810
 1597010400000000
+```
+
+Plays well with others:
+```sh
+$ date | wttime
+UTC:     2020-05-24 20:46:40 (+0000)
 ```
 
 ### Help
