@@ -62,7 +62,7 @@ wttime --help
 
 #### How is this better than [dateutil](https://dateutil.readthedocs.io/en/stable/parser.html#dateutil.parser.parse)?
 
-wttime can also handle timestamps, disambiguate more formats, and be used in from the shell. It does
+wttime can also handle timestamps, disambiguate more formats, and be used from the shell. It does
 use dateutil under the hood.
 
 #### What is the deal with 'remote timezone'?
